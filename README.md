@@ -7,6 +7,10 @@ Nerves trial on BeagleBone Green
 ```
 $ mix nerves.new nerves_bbg --target bbb 
 $ cd nerves_bbg
+
+$ export MIX_TARGET=bbb
+$ mix deps.get
+$ 
 ```
 
 ## Targets
