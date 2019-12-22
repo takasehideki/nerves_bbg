@@ -4,13 +4,44 @@ Nerves trial on BeagleBone Green
 
 ## Operation Steps
 
+### Getting Started
+
 ```
 $ mix nerves.new nerves_bbg --target bbb 
 $ cd nerves_bbg
 
 $ export MIX_TARGET=bbb
 $ mix deps.get
-$ 
+$ mix firmware
+
+# Insert microSD to host
+$ mix firmware.burn
+
+# Insert microSD to BBG
+# Connet host and BBG with microUSB cable
+# Hold down the USER/BOOT button, and power on with Power button
+$ picocom /dev/tty.usbmodemBBG2190115095
+
+iex(3)> NervesBbg.hello
+:world
+
+# Or
+$ ssh nerves.local -i ~/.ssh/id_rsa
+Warning: Permanently added 'nerves.local,172.31.123.1' (RSA) to the list of known hosts.
+Interactive Elixir (1.9.1) - press Ctrl+C to exit (type h() ENTER for help)
+Toolshed imported. Run h(Toolshed) for more info
+RingLogger is collecting log messages from Elixir and Linux. To see the
+messages, either attach the current IEx session to the logger:
+
+  RingLogger.attach
+
+or print the next messages in the log:
+
+  RingLogger.next
+
+iex(nerves_bbg@nerves.local)1> NervesBbg.hello
+:world
+
 ```
 
 ## Targets
