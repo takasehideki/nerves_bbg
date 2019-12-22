@@ -28,6 +28,7 @@ iex(3)> NervesBbg.hello
 ```
 
 ### Connect and Upload by ssh on VirtualEther
+
 ```
 $ ssh-keygen -t rsa -f ~/.ssh/nerves_bbg_id_rsa
 Generating public/private rsa key pair.
@@ -99,6 +100,10 @@ iex(nerves_bbg@nerves_bbg.local)1> NervesBbg.hello
 :world
 iex(nerves_bbg@nerves_bbg.local)2> uname
 Nerves nerves-1509 nerves_bbg 0.1.0 (329a762e-f047-5800-ef73-a96cdcf405d9) arm
+
+# Upload firm by ssh
+$ mix firmware.gen.script
+$ ./upload.sh nerves_bbg.local
 
 ```
 
