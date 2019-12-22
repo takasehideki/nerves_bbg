@@ -124,6 +124,21 @@ Nerves nerves-1509 nerves_bbg 0.1.0 (329a762e-f047-5800-ef73-a96cdcf405d9) arm
 # Upload firm by ssh
 $ mix firmware.gen.script
 $ ./upload.sh nerves_bbg.local
+Path: ./_build/bbb_dev/nerves/images/nerves_bbg.fw
+Product: nerves_bbg 0.1.0
+UUID: 29035cdc-5e8e-5e73-c1ca-3caec889b152
+Platform: bbb
+
+Uploading to nerves_bbg.local...
+Warning: Permanently added '[nerves_bbg.local]:8989,[172.31.123.1]:8989' (RSA) to the list of known hosts.
+Running fwup...
+fwup: Upgrading partition B
+|====================================| 100% (25.84 / 25.84) MB
+Success!
+Elapsed time: 11.053 s
+Rebooting...
+Received disconnect from 172.31.123.1 port 8989:11: Terminated (shutdown) by supervisor
+Disconnected from 172.31.123.1 port 8989
 
 ```
 
@@ -193,6 +208,61 @@ iex(4)> Leds.set led3: true
 true
 iex(5)> Leds.set led1: :heartbeat
 true
+
+```
+
+### Connecting Grove Button
+
+- Provision to use Circuits GPIO
+```
+# Edit mix.exs
+$ git diff mix.exs 
+diff --git a/mix.exs b/mix.exs
+index 5be2681..5eee5e1 100644
+--- a/mix.exs
++++ b/mix.exs
+@@ -43,6 +43,7 @@ defmodule NervesBbg.MixProject do
+       {:shoehorn, "~> 0.6"},
+       {:ring_logger, "~> 0.6"},
+       {:toolshed, "~> 0.2"},
++      {:circuits_gpio, "~> 0.4"},
+ 
+       # Dependencies for all targets except :host
+       {:nerves_runtime, "~> 0.6", targets: @all_targets},
+
+```
+
+- Re-Build & Burn firm
+```
+$ mix deps.get
+$ mix firmware
+$ ./upload.sh nerves_bbg.local
+
+```
+
+- Check the value of Grove Button
+  - UART2 - P9_22 - GPIO_2
+```
+$ picocom /dev/tty.usbmodem14203 
+
+iex(3)> pin = 2
+2
+iex(4)> {:ok, gpio} = Circuits.GPIO.open(pin, :input) 
+{:ok, #Reference<0.2554534396.269090819.51719>}
+iex(5)> Circuits.GPIO.read(gpio)
+0
+iex(6)> Circuits.GPIO.read(gpio)
+1
+iex(7)> Circuits.GPIO.read(gpio)
+0
+iex(9)> Circuits.GPIO.set_interrupts(gpio, :both)
+:ok
+iex(10)> flush
+{:circuits_gpio, 2, 487389975849, 1}
+{:circuits_gpio, 2, 487647983807, 0}
+{:circuits_gpio, 2, 487982780474, 1}
+{:circuits_gpio, 2, 488137615308, 0}
+:ok
 
 ```
 
