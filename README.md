@@ -6,6 +6,7 @@ Nerves trial on BeagleBone Green
 
 ### Getting Started
 
+- First Steps
 ```
 $ mix nerves.new nerves_bbg --target bbb 
 $ cd nerves_bbg
@@ -14,9 +15,17 @@ $ export MIX_TARGET=bbb
 $ mix deps.get
 $ mix firmware
 
+```
+
+- Burn firmware image to microSD
+```
 # Insert microSD to host
 $ mix firmware.burn
 
+```
+
+- Boot up Nerves Systems on BeagleBone Green
+```
 # Insert microSD to BBG
 # Connet host and BBG with microUSB cable
 # Hold down the USER/BOOT button, and power on with Power button
@@ -29,6 +38,7 @@ iex(3)> NervesBbg.hello
 
 ### Connect and Upload by ssh on VirtualEther
 
+- Generate RSA key
 ```
 $ ssh-keygen -t rsa -f ~/.ssh/nerves_bbg_id_rsa
 Generating public/private rsa key pair.
@@ -50,7 +60,10 @@ The key's randomart image is:
 |+ O=oo           |
 | =o*Xo           |
 +----[SHA256]-----+
+```
 
+- Provision ssh configuration
+```
 $ cat ssh_config.txt >> ~/.ssh/config
 
 # Edit config/target.exs
@@ -79,10 +92,17 @@ index 7fce607..8e63ff7 100644
    node_name: node_name,
    node_host: :mdns_domain
  
+```
+
+- Re-Build & Burn firm
+```
 $ mix firmware
 # Insert microSD to host
 $ mix firmware.burn
+```
 
+- Connect via ssh
+```
 $ ssh nerves_bbg.local 
 Warning: Permanently added 'nerves_bbg.local,172.31.123.1' (RSA) to the list of known hosts.
 Interactive Elixir (1.9.1) - press Ctrl+C to exit (type h() ENTER for help)
@@ -104,6 +124,75 @@ Nerves nerves-1509 nerves_bbg 0.1.0 (329a762e-f047-5800-ef73-a96cdcf405d9) arm
 # Upload firm by ssh
 $ mix firmware.gen.script
 $ ./upload.sh nerves_bbg.local
+
+```
+
+### Blinking LEDs
+
+- Provision to use LEDs
+```
+iex(1)> ls "/sys/class/leds"
+beaglebone:green:usr0     beaglebone:green:usr1     beaglebone:green:usr2     beaglebone:green:usr3    
+
+# Edit mix.exs
+$ git diff mix.exs
+diff --git a/mix.exs b/mix.exs
+index bf46971..5be2681 100644
+--- a/mix.exs
++++ b/mix.exs
+@@ -47,6 +47,7 @@ defmodule NervesBbg.MixProject do
+       # Dependencies for all targets except :host
+       {:nerves_runtime, "~> 0.6", targets: @all_targets},
+       {:nerves_init_gadget, "~> 0.4", targets: @all_targets},
++      {:nerves_leds, "~> 0.8", targets: @all_targets},
+
+       # Dependencies for specific targets
+       {:nerves_system_bbb, "~> 2.3", runtime: false, targets: :bbb},
+
+# Edit config/target.exs
+$ git diff config/target.exs 
+diff --git a/config/target.exs b/config/target.exs
+index 8e63ff7..aacf9ac 100644
+--- a/config/target.exs
++++ b/config/target.exs
+@@ -35,6 +35,17 @@ config :nerves_init_gadget,
+   node_name: node_name,
+   node_host: :mdns_domain
+ 
++# configuration for PocketBeagle on-board LEDs (target bbb)
++config :blinky, led_list: [:led0, :led1, :led2, :led3]
++
++config :nerves_leds,
++  names: [
++    led0: "beaglebone:green:usr0",
++    led1: "beaglebone:green:usr1",
++    led2: "beaglebone:green:usr2",
++    led3: "beaglebone:green:usr3"
++  ]
++
+ # Import target specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+ # Uncomment to use target specific configurations
+```
+
+- Re-Build & Burn firm
+```
+$ mix deps.get
+$ mix firmware
+$ ./upload.sh nerves_bbg.local
+
+```
+
+- Blinking LEDs
+```
+$ picocom /dev/tty.usbmodem14203 
+
+iex(3)> alias Nerves.Leds
+Nerves.Leds
+iex(4)> Leds.set led3: true
+true
+iex(5)> Leds.set led1: :heartbeat
+true
 
 ```
 
