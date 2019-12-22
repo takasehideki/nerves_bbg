@@ -6,9 +6,7 @@ use Mix.Config
 
 keys =
   [
-    Path.join([System.user_home!(), ".ssh", "id_rsa.pub"]),
-    Path.join([System.user_home!(), ".ssh", "id_ecdsa.pub"]),
-    Path.join([System.user_home!(), ".ssh", "id_ed25519.pub"])
+    Path.join([System.user_home!(), ".ssh", "nerves_bbg_id_rsa.pub"])
   ]
   |> Enum.filter(&File.exists?/1)
 
@@ -33,7 +31,7 @@ node_name = if Mix.env() != :prod, do: "nerves_bbg"
 config :nerves_init_gadget,
   ifname: "usb0",
   address_method: :dhcpd,
-  mdns_domain: "nerves.local",
+  mdns_domain: "nerves_bbg.local",
   node_name: node_name,
   node_host: :mdns_domain
 

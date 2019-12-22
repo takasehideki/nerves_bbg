@@ -20,14 +20,70 @@ $ mix firmware.burn
 # Insert microSD to BBG
 # Connet host and BBG with microUSB cable
 # Hold down the USER/BOOT button, and power on with Power button
-$ picocom /dev/tty.usbmodemBBG2190115095
+$ picocom /dev/tty.usbmodem14203 
 
 iex(3)> NervesBbg.hello
 :world
 
-# Or
-$ ssh nerves.local -i ~/.ssh/id_rsa
-Warning: Permanently added 'nerves.local,172.31.123.1' (RSA) to the list of known hosts.
+```
+
+### Connect and Upload by ssh on VirtualEther
+```
+$ ssh-keygen -t rsa -f ~/.ssh/nerves_bbg_id_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /Users/takase/.ssh/nerves_bbg_id_rsa.
+Your public key has been saved in /Users/takase/.ssh/nerves_bbg_id_rsa.pub.
+The key fingerprint is:
+SHA256:TcVUlgUEaTzGCpe0oGZyh+LuWaSI6HFySv249rK8owk takase@TAKASE-MacBookPro-8.local
+The key's randomart image is:
++---[RSA 2048]----+
+|        ...*+==+.|
+|       o..ooO..  |
+|    o * .oo+ .   |
+|   . * . o.      |
+|    . . S .      |
+|...o o           |
+|E+.+o .          |
+|+ O=oo           |
+| =o*Xo           |
++----[SHA256]-----+
+
+$ cat ssh_config.txt >> ~/.ssh/config
+
+# Edit config/target.exs
+$ git diff config/target.exs 
+diff --git a/config/target.exs b/config/target.exs
+index 7fce607..8e63ff7 100644
+--- a/config/target.exs
++++ b/config/target.exs
+@@ -6,9 +6,7 @@ use Mix.Config
+ 
+ keys =
+   [
+-    Path.join([System.user_home!(), ".ssh", "id_rsa.pub"]),
+-    Path.join([System.user_home!(), ".ssh", "id_ecdsa.pub"]),
+-    Path.join([System.user_home!(), ".ssh", "id_ed25519.pub"])
++    Path.join([System.user_home!(), ".ssh", "nerves_bbg_id_rsa.pub"])
+   ]
+   |> Enum.filter(&File.exists?/1)
+ 
+@@ -33,7 +31,7 @@ node_name = if Mix.env() != :prod, do: "nerves_bbg"
+ config :nerves_init_gadget,
+   ifname: "usb0",
+   address_method: :dhcpd,
+-  mdns_domain: "nerves.local",
++  mdns_domain: "nerves_bbg.local",
+   node_name: node_name,
+   node_host: :mdns_domain
+ 
+$ mix firmware
+# Insert microSD to host
+$ mix firmware.burn
+
+$ ssh nerves_bbg.local 
+Warning: Permanently added 'nerves_bbg.local,172.31.123.1' (RSA) to the list of known hosts.
 Interactive Elixir (1.9.1) - press Ctrl+C to exit (type h() ENTER for help)
 Toolshed imported. Run h(Toolshed) for more info
 RingLogger is collecting log messages from Elixir and Linux. To see the
@@ -39,8 +95,10 @@ or print the next messages in the log:
 
   RingLogger.next
 
-iex(nerves_bbg@nerves.local)1> NervesBbg.hello
+iex(nerves_bbg@nerves_bbg.local)1> NervesBbg.hello
 :world
+iex(nerves_bbg@nerves_bbg.local)2> uname
+Nerves nerves-1509 nerves_bbg 0.1.0 (329a762e-f047-5800-ef73-a96cdcf405d9) arm
 
 ```
 

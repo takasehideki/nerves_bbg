@@ -1,0 +1,5 @@
+Host nerves_bbg.local
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  IdentityFile ~/.ssh/nerves_bbg_id_rsa
+
