@@ -127,6 +127,54 @@ Rebooting...
 
 ```
 
+### Blinking LEDs
+
+- Provision to use LEDs
+```
+iex(1)> ls "/sys/class/leds"
+beaglebone:green:usr0     beaglebone:green:usr1     beaglebone:green:usr2     beaglebone:green:usr3    
+
+# Edit mix.exs
+$ git diff mix.exs
+diff --git a/mix.exs b/mix.exs
+index 62ace16..326b2e7 100644
+--- a/mix.exs
++++ b/mix.exs
+@@ -47,6 +47,7 @@ defmodule NervesBbg.MixProject do
+       # Dependencies for all targets except :host
+       {:nerves_runtime, "~> 0.6", targets: @all_targets},
+       {:nerves_pack, "~> 0.2", targets: @all_targets},
++      {:nerves_leds, "~> 0.8", targets: @all_targets},
+ 
+       # Dependencies for specific targets
+       {:nerves_system_bbb, "~> 2.6", runtime: false, targets: :bbb},
+
+# Edit config/target.exs
+$ git diff config/target.exs 
+diff --git a/config/target.exs b/config/target.exs
+index be595ce..db0749f 100644
+--- a/config/target.exs
++++ b/config/target.exs
+@@ -83,6 +83,16 @@ config :mdns_lite,
+     }
+   ]
+ 
++# configuration for PocketBeagle on-board LEDs (target bbb)
++config :blinky, led_list: [:led0, :led1, :led2, :led3]
++config :nerves_leds,
++  names: [
++    led0: "beaglebone:green:usr0",
++    led1: "beaglebone:green:usr1",
++    led2: "beaglebone:green:usr2",
++    led3: "beaglebone:green:usr3"
++  ]
++
+ # Import target specific config. This must remain at the bottom
+ # of this file so it overrides the configuration defined above.
+ # Uncomment to use target specific configurations
+
+```
+
 # Original README.md
 
 ## Targets

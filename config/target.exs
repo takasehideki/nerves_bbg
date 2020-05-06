@@ -83,6 +83,16 @@ config :mdns_lite,
     }
   ]
 
+# configuration for PocketBeagle on-board LEDs (target bbb)
+config :blinky, led_list: [:led0, :led1, :led2, :led3]
+config :nerves_leds,
+  names: [
+    led0: "beaglebone:green:usr0",
+    led1: "beaglebone:green:usr1",
+    led2: "beaglebone:green:usr2",
+    led3: "beaglebone:green:usr3"
+  ]
+
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
