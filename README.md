@@ -44,7 +44,7 @@ Connection to nerves.local closed.
 
 ```
 
-### Connect and Upload by ssh on VirtualEther
+### Connect by ssh on VirtualEther
 
 - Generate RSA key
 ```
@@ -98,8 +98,34 @@ iex(3)> exit
 Connection to nerves.local closed.
 ```
 
+### Upload by ssh on VirtualEther
+
+```
+$ mix firmware.gen.script
+
+Nerves environment
+  MIX_TARGET:   bbb
+  MIX_ENV:      dev
+
+Writing upload.sh...
 
 
+$ ./upload.sh
+Path: ./_build/bbb_dev/nerves/images/nerves_bbg.fw
+Product: nerves_bbg 0.1.0
+UUID: a6418d17-a4e0-52e9-3825-b380a2c297df
+Platform: bbb
+
+Uploading to nerves.local...
+Warning: Permanently added '[nerves.local]:8989,[172.31.123.1]:8989' (RSA) to the list of known hosts.
+Running fwup...
+fwup: Upgrading partition B
+100% [====================================] 26.52 MB in / 26.75 MB out     
+Success!
+Elapsed time: 12.533 s
+Rebooting...
+
+```
 
 # Original README.md
 
