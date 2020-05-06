@@ -196,6 +196,60 @@ true
 
 ```
 
+### Connecting Grove Button
+
+- Provision to use Circuits GPIO
+```
+# Edit mix.exs
+$ git diff mix.exs 
+diff --git a/mix.exs b/mix.exs
+index 326b2e7..cef2365 100644
+--- a/mix.exs
++++ b/mix.exs
+@@ -43,6 +43,7 @@ defmodule NervesBbg.MixProject do
+       {:shoehorn, "~> 0.6"},
+       {:ring_logger, "~> 0.6"},
+       {:toolshed, "~> 0.2"},
++      {:circuits_gpio, "~> 0.4"},
+ 
+       # Dependencies for all targets except :host
+       {:nerves_runtime, "~> 0.6", targets: @all_targets},
+
+```
+
+- Re-Build & Burn firm
+```
+$ mix deps.get
+$ mix firmware
+$ ./upload.sh
+
+```
+
+- Check the value of Grove Button
+  - UART2 - P9_22 - GPIO_2
+```
+$ ssh nerves.local
+
+iex(3)> pin = 2
+2
+iex(4)> {:ok, gpio} = Circuits.GPIO.open(pin, :input) 
+{:ok, #Reference<0.2554534396.269090819.51719>}
+iex(5)> Circuits.GPIO.read(gpio)
+0
+iex(6)> Circuits.GPIO.read(gpio)
+1
+iex(7)> Circuits.GPIO.read(gpio)
+0
+iex(9)> Circuits.GPIO.set_interrupts(gpio, :both)
+:ok
+iex(10)> flush
+{:circuits_gpio, 2, 487389975849, 1}
+{:circuits_gpio, 2, 487647983807, 0}
+{:circuits_gpio, 2, 487982780474, 1}
+{:circuits_gpio, 2, 488137615308, 0}
+:ok
+
+```
 
 
 # Original README.md
