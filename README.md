@@ -15,6 +15,9 @@ $ cd nerves_bbg
 $ export MIX_TARGET=bbb
 $ mix deps.get
 $ mix firmware
+
+# Insert microSD to hostPC
+$ mix burn
 ```
 
 # Original README.md
