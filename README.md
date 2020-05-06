@@ -4,12 +4,17 @@ Nerves trial on BeagleBone Green
 
 ## Operation Steps
 
+### Getting Stated
+
+- Quick start
+
 ```
 $ mix nerves.new nerves_bbg --target bbb 
 $ cd nerves_bbg
 
 $ export MIX_TARGET=bbb
 $ mix deps.get
+$ mix firmware
 ```
 
 # Original README.md
