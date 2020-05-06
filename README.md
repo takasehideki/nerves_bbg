@@ -175,6 +175,29 @@ index be595ce..db0749f 100644
 
 ```
 
+- Re-Build & Burn firm
+```
+$ mix deps.get
+$ mix firmware
+$ ./upload.sh
+
+```
+
+- Blinking LEDs
+```
+$ ssh nerves.local
+
+iex(3)> alias Nerves.Leds
+Nerves.Leds
+iex(4)> Leds.set led3: true
+true
+iex(5)> Leds.set led1: :heartbeat
+true
+
+```
+
+
+
 # Original README.md
 
 ## Targets
